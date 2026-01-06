@@ -2,10 +2,14 @@ name: .NET Build with SonarQube
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches:
+      - master
+      - main
 
+  pull_request:
+    branches:
+      - master
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,17 +27,17 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
 
       - name: Restore dependencies
-        run: dotnet restore UnitTestAutomation.sln
+        run: dotnet restore GithubActionTest.sln
 
       - name: Build
-        run: dotnet build UnitTestAutomation.sln --no-restore
+        run: dotnet build GithubActionTest.sln --no-restore
 
       - name: Run SonarQube Analysis
         run: |
           dotnet sonarscanner begin \
-            /k:"UnitTestAutomation" \
+            /k:"GithubActionTest" \
             /o:"${{ secrets.SONAR_ORGANIZATION }}" \
             /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" \
             /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-          dotnet build UnitTestAutomation.sln
+          dotnet build GithubActionTest.sln
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
